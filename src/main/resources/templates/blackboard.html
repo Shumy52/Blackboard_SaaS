@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blackboard</title>
+    <style>
+        #canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<h1>Shared Blackboard</h1>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    // Connect to WebSocket
+    const socket = new WebSocket("ws://localhost:8080/ws/blackboard");
+
+    socket.onopen = function() {
+        console.log("Connected to the blackboard WebSocket.");
+    };
+
+    socket.onmessage = function(event) {
+        console.log("Message from server: ", event.data);
+        // Add logic to handle received drawing data here
+    };
+
+    socket.onclose = function(event) {
+        console.log("Disconnected from the WebSocket.");
+    };
+
+    // WebSocket message handler
+    socket.onmessage = function(event) {
+        const message = JSON.parse(event.data);
+        if (message.type === "draw") {
+            drawLine(message.startX, message.startY, message.endX, message.endY);
+        }
+    };
+
+    // Drawing functionality
+    canvas.onmousedown = (e) => { drawing = true; };
+    canvas.onmouseup = (e) => { drawing = false; };
+    canvas.onmousemove = (e) => {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const startX = e.clientX - rect.left;
+        const startY = e.clientY - rect.top;
+        const endX = e.movementX + startX;
+        const endY = e.movementY + startY;
+
+        drawLine(startX, startY, endX, endY);
+        sendDrawing(startX, startY, endX, endY);
+    };
+
+    function drawLine(startX, startY, endX, endY) {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+    }
+
+    function sendDrawing(startX, startY, endX, endY) {
+        const message = JSON.stringify({
+            type: "draw",
+            startX: startX,
+            startY: startY,
+            endX: endX,
+            endY: endY
+        });
+        socket.send(message);
+
+
+    }
+</script>
+</body>
+</html>
