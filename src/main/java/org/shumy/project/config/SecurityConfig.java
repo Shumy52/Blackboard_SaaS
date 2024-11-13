@@ -39,3 +39,5 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(user);
     }
 }
+// TODO: Users can only watch the blackboard, but not draw on it. Update the SecurityConfig class to allow only authenticated users to access the /ws/blackboard endpoint.
+//

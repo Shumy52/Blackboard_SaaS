@@ -19,7 +19,7 @@ public class HelloController {
 
     @GetMapping("/blackboard")
     public String showBlackboard() {
-        return "blackboard"; // Spring will look for blackboard.html in src/main/resources/templates
+        return "blackboard";     // Spring will look for blackboard.html in src/main/resources/templates
     }
 
 }
