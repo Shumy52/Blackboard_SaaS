@@ -1,4 +1,4 @@
-package org.shumy.project.config;
+package org.shumy.project.model;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;

@@ -1,5 +1,6 @@
-package org.shumy.project.config;
+package org.shumy.project.controller;
 
+import org.shumy.project.model.BlackboardHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;

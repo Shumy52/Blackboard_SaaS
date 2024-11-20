@@ -9,8 +9,8 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello(Model model) {
-        model.addAttribute("message", "Hello, World!");
-        return "hello";
+        model.addAttribute("message", "Hello+World!");
+        return "view/hello";
     }
     @GetMapping("/")
     public String redirectToHello() {
@@ -19,7 +19,7 @@ public class HelloController {
 
     @GetMapping("/blackboard")
     public String showBlackboard() {
-        return "blackboard";     // Spring will look for blackboard.html in src/main/resources/templates
+        return "view/blackboard";     // Spring will look for blackboard.html in src/main/resources/templates
     }
 
 }

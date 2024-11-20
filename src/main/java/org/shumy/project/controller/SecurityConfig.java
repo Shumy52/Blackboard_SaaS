@@ -1,4 +1,4 @@
-package org.shumy.project.config;
+package org.shumy.project.controller;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
