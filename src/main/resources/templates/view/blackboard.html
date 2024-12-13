@@ -7,16 +7,24 @@
         #canvas {
             border: 1px solid black;
         }
+        #error {
+            color: #ff0015;
+            display: none;
+        }
     </style>
 </head>
 <body>
 <h1>Shared Blackboard</h1>
+<p id="memo">Only admins can write on this blackboard.</p>
 <canvas id="canvas" width="800" height="600"></canvas>
+<button id="clearButton" style="display:none;">Clear Blackboard</button>
+<p id="error">Error: You do not have permission to write on this blackboard.</p>
 
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let drawing = false;
+    let isAdmin = false;
 
     // Connect to WebSocket
     const socket = new WebSocket("ws://localhost:8080/ws/blackboard");
@@ -26,27 +34,23 @@
     };
 
     socket.onmessage = function(event) {
-        console.log("Message from server: ", event.data);
-        // Add logic to handle received drawing data here
+        const message = JSON.parse(event.data);
+        if (message.type === "draw") {
+            drawLine(message.startX, message.startY, message.endX, message.endY);
+        } else if (message.type === "clear") {
+            clearCanvas();
+        }
     };
 
     socket.onclose = function(event) {
         console.log("Disconnected from the WebSocket.");
     };
 
-    // WebSocket message handler
-    socket.onmessage = function(event) {
-        const message = JSON.parse(event.data);
-        if (message.type === "draw") {
-            drawLine(message.startX, message.startY, message.endX, message.endY);
-        }
-    };
-
     // Drawing functionality
-    canvas.onmousedown = (e) => { drawing = true; };
-    canvas.onmouseup = (e) => { drawing = false; };
+    canvas.onmousedown = (e) => { if (isAdmin) drawing = true; else showError(); };
+    canvas.onmouseup = (e) => { if (isAdmin) drawing = false; };
     canvas.onmousemove = (e) => {
-        if (!drawing) return;
+        if (!drawing || !isAdmin) return;
         const rect = canvas.getBoundingClientRect();
         const startX = e.clientX - rect.left;
         const startY = e.clientY - rect.top;
@@ -73,9 +77,35 @@
             endY: endY
         });
         socket.send(message);
-
-
     }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    document.getElementById('clearButton').onclick = function() {
+        if (isAdmin) {
+            socket.send(JSON.stringify({ type: "clear" }));
+        }
+    };
+
+    function showError() {
+        const errorElement = document.getElementById('error');
+        errorElement.style.display = 'block';
+        setTimeout(() => {
+            errorElement.style.display = 'none';
+        }, 3000);
+    }
+
+    // Show clear button for admins and set isAdmin flag
+    fetch('/user-role')
+        .then(response => response.json())
+        .then(data => {
+            if (data.role === 'ADMIN') {
+                document.getElementById('clearButton').style.display = 'block';
+                isAdmin = true;
+            }
+        });
 </script>
 </body>
 </html>

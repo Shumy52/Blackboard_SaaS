@@ -19,8 +19,11 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private static final Logger logger = Logger.getLogger(WebSocketConfig.class.getName());
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+
         registry.addHandler(new HelloWebSocketHandler(), "/ws/hello").setAllowedOrigins("*");
         registry.addHandler(new BlackboardHandler(), "/ws/blackboard").setAllowedOrigins("*");
+        //Set BlackboardHandler to handle WebSocket requests at /ws/blackboard
+
         logger.info("WebSocket handlers registered");
     }
 

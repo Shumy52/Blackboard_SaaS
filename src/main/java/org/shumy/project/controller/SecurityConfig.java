@@ -36,8 +36,13 @@ public class SecurityConfig {
                 .password("password")
                 .roles("USER")
                 .build();
-        return new InMemoryUserDetailsManager(user);
+
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("admin")
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(user, admin);
     }
 }
-// TODO: Users can only watch the blackboard, but not draw on it. Update the SecurityConfig class to allow only authenticated users to access the /ws/blackboard endpoint.
-//
