@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
         registry.addHandler(new HelloWebSocketHandler(), "/ws/hello").setAllowedOrigins("*");
         registry.addHandler(new BlackboardHandler(), "/ws/blackboard").setAllowedOrigins("*");
-        //Set BlackboardHandler to handle WebSocket requests at /ws/blackboard
+        //Set BlaeckboardHandler to handle WebSocket requests at /ws/blackboard
 
         logger.info("WebSocket handlers registered");
     }
